@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import RefreshControl from 'components/RefreshControl/RefreshControl';
+import RefreshControl from 'components/PullToRefresh/PullToRefresh';
 import {CommonActions, NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NetworkStatus, useQuery} from '@apollo/client';
 import Spacer from 'components/Spacer';

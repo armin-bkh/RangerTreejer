@@ -12,7 +12,7 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import RefreshControl from 'components/RefreshControl/RefreshControl';
+import RefreshControl from 'components/PullToRefresh/PullToRefresh';
 import {CommonActions, NavigationProp, RouteProp, useFocusEffect} from '@react-navigation/native';
 import {GreenBlockRouteParamList, Tree} from 'types';
 import {useWalletAccount} from 'services/web3';
