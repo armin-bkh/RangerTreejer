@@ -25,6 +25,10 @@ body {
   background-color: #faf8f0;
 }
 
+.ptr__pull-down--pull-more {
+  display: none !important;
+}
+
 .mapboxgl-ctrl-top-right {
   position: fixed !important;
   top: auto !important;
