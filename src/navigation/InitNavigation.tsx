@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppLoading} from 'components/AppLoading/AppLoading';
 import ApolloProvider from 'services/apollo';
 import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';

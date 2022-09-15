@@ -218,6 +218,7 @@ export const storageKeys: StorageKeys = {
 
 export const rangerUrl = 'https://ranger.treejer.com';
 export const rangerDevUrl = 'https://ranger-dev.treejer.com';
+export const redirectRangerUrl = isProd ? rangerUrl : 'http://localhost:3000';
 export const defaultLocale = 'en';
 export const defaultNetwork = BlockchainNetwork.MaticMain;
 export const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.treejer.ranger';

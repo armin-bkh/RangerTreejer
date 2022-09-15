@@ -12,6 +12,8 @@ import {getBalance, resetBalance} from '../contracts/contracts';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {profileActions, selectProfile} from '../profile/profile';
 import {TReduxState, TStoreRedux} from '../../store';
+import {SDKBaseReactNative} from '@magic-sdk/react-native/dist/types/react-native-sdk-base';
+import {OAuthExtension} from '@magic-ext/react-native-oauth';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -22,7 +24,7 @@ export type TWeb3 = {
   magicToken: string;
   wallet: string;
   loading: boolean;
-  magic: Magic;
+  magic: typeof defaultMagic;
   web3: Web3;
   treeFactory: Contract;
   planter: Contract;
@@ -53,7 +55,7 @@ export type TWeb3Action = {
   type: string;
   updateWeb3: {
     config: NetworkConfig;
-    magic: Magic;
+    magic: typeof defaultMagic;
     web3: Web3;
     treeFactory: Contract;
     planter: Contract;
@@ -74,6 +76,7 @@ export type TWeb3Action = {
 };
 
 export const CREATE_WEB3 = 'CREATE_WEB3';
+
 export function createWeb3(newNetwork?: BlockchainNetwork) {
   return {
     type: CREATE_WEB3,
@@ -96,10 +99,6 @@ export function updateWeb3(payload: TWeb3Action['updateWeb3']) {
   return {type: UPDATE_WEB3, updateWeb3: payload};
 }
 
-export const UPDATE_WEB3_DONE = 'UPDATE_WEB3_DONE';
-export function updateWeb3Done() {
-  return {type: UPDATE_WEB3_DONE};
-}
 export const STORE_MAGIC_TOKEN = 'STORE_MAGIC_TOKEN';
 export function storeMagicToken(payload: TWeb3Action['storeMagicToken']) {
   return {type: STORE_MAGIC_TOKEN, storeMagicToken: payload};
@@ -109,6 +108,7 @@ export const UPDATE_MAGIC_TOKEN = 'UPDATE_MAGIC_TOKEN';
 export function updateMagicToken(payload: TWeb3Action['updateMagicToken']) {
   return {type: UPDATE_MAGIC_TOKEN, updateMagicToken: payload};
 }
+
 export const NETWORK_DISCONNECT = 'NETWORK_DISCONNECT';
 export function networkDisconnect() {
   return {type: NETWORK_DISCONNECT};
@@ -146,12 +146,6 @@ export const web3Reducer = (state: TWeb3 = initialState, action: TWeb3Action): T
       return {
         ...state,
         ...action.updateWeb3,
-        loading: false,
-      };
-    }
-    case UPDATE_WEB3_DONE: {
-      return {
-        ...state,
         loading: false,
       };
     }
@@ -205,7 +199,7 @@ export function* watchCreateWeb3({newNetwork}: TWeb3Action) {
       yield put(resetWeb3Data());
       config = configs[newNetwork];
     }
-    const magic: Magic = magicGenerator(config);
+    const magic: typeof defaultMagic = magicGenerator(config);
     const web3 = new Web3(magic.rpcProvider);
     const treeFactory = contractGenerator(web3, config.contracts.TreeFactory);
     const planter = contractGenerator(web3, config.contracts.Planter);

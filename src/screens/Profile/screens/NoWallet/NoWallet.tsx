@@ -1,26 +1,29 @@
-import globalStyles from 'constants/styles';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
 import {Image, Keyboard, Linking, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useTranslation} from 'react-i18next';
+import {useForm} from 'react-hook-form';
+import PhoneInput from 'react-native-phone-number-input';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {OAuthProvider} from '@magic-ext/react-native-oauth';
+
+import {RootNavigationProp, Routes} from 'navigation';
+import {redirectRangerUrl} from 'services/config';
+import globalStyles from 'constants/styles';
+import {colors} from 'constants/values';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import Spacer from 'components/Spacer';
+import AppVersion from 'components/AppVersion';
+import TextField, {PhoneField} from 'components/TextField';
+import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {useConfig, useMagic, useUserWeb3} from 'utilities/hooks/useWeb3';
 import {locationPermission} from 'utilities/helpers/permissions';
-import {useTranslation} from 'react-i18next';
 import {useAnalytics} from 'utilities/hooks/useAnalytics';
-import TextField, {PhoneField} from 'components/TextField';
-import {useForm} from 'react-hook-form';
-import PhoneInput from 'react-native-phone-number-input';
-import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
-import {colors} from 'constants/values';
-import KeyboardDismiss from 'components/KeyboardDismiss/KeyboardDismiss';
 import {isWeb} from 'utilities/helpers/web';
-import {RootNavigationProp, Routes} from 'navigation';
-import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {validateEmail} from 'utilities/helpers/validators';
-import AppVersion from 'components/AppVersion';
+import {AlertMode, showAlert} from 'utilities/helpers/alert';
+import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import {NoWalletImage} from '../../../../../assets/images';
 import {useProfile} from '../../../../redux/modules/profile/profile';
 
@@ -107,7 +110,6 @@ function NoWallet(props: NoWalletProps) {
         } catch (e) {
           throw e;
         }
-        // await refetchUser();
       } else {
         showAlert({
           title: t('createWallet.failed.title'),
@@ -138,7 +140,6 @@ function NoWallet(props: NoWalletProps) {
       const result = await magic?.auth.loginWithMagicLink({email});
       if (result) {
         storeMagicToken(result, {email});
-        // await refetchUser();
         console.log(result, 'result is here');
       } else {
         showAlert({
@@ -157,6 +158,21 @@ function NoWallet(props: NoWalletProps) {
       setLoginPressed(false);
     }
   });
+
+  const handleSocialLogin = useCallback(async (provider: OAuthProvider) => {
+    try {
+      console.log('mamad');
+      const result = await magic.oauth.loginWithPopup({
+        provider,
+        redirectURI: redirectRangerUrl,
+      });
+      const initialUrl = await Linking.getInitialURL();
+      console.log(initialUrl);
+      console.log(result, 'result is here');
+    } catch (e: any) {
+      console.log(e, 'error ish er');
+    }
+  }, []);
 
   const handleToggleAuthMethod = () => {
     setIsEmail(!isEmail);
@@ -245,11 +261,21 @@ function NoWallet(props: NoWalletProps) {
                   />
                   <Spacer times={4} />
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <SocialLoginButton name="Apple" disabled={loading} />
+                    <SocialLoginButton name="Apple" handleLogin={handleSocialLogin} disabled={loading} />
                     <Spacer times={2} />
-                    <SocialLoginButton name="Google" color={colors.red} disabled={loading} />
+                    <SocialLoginButton
+                      name="Google"
+                      handleLogin={handleSocialLogin}
+                      color={colors.red}
+                      disabled={loading}
+                    />
                     <Spacer times={2} />
-                    <SocialLoginButton name="Twitter" color="#24A4F3" disabled={loading} />
+                    <SocialLoginButton
+                      name="Twitter"
+                      handleLogin={handleSocialLogin}
+                      color="#24A4F3"
+                      disabled={loading}
+                    />
                   </View>
                 </View>
                 <Spacer times={4} />
