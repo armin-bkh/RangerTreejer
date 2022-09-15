@@ -1,6 +1,8 @@
-import {BlockchainNetwork, NetworkConfig} from 'services/config';
-import {Magic} from 'magic-sdk';
 import Web3 from 'web3';
+import {Magic} from 'magic-sdk';
+import {OAuthExtension} from '@magic-ext/oauth';
+
+import {BlockchainNetwork, NetworkConfig} from 'services/config';
 
 export function isMatic(config: NetworkConfig) {
   return config.magicNetwork !== BlockchainNetwork.Rinkeby;
@@ -8,6 +10,7 @@ export function isMatic(config: NetworkConfig) {
 
 export function magicGenerator(config: NetworkConfig) {
   return new Magic(config.magicApiKey, {
+    extensions: [new OAuthExtension()],
     network: isMatic(config)
       ? {
           rpcUrl: config.web3Url,
