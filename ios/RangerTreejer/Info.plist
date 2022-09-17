@@ -6,6 +6,19 @@
   <string>Location permission</string>
   <key>NSLocationAlwaysUsageDescription</key>
   <string>when in use</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFBundleURLName</key>
+      <string>my-scheme</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>rangerTreejer</string>
+      </array>
+    </dict>
+  </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

@@ -1,6 +1,6 @@
-import Web3 from 'web3';
 import {Magic} from 'magic-sdk';
 import {OAuthExtension} from '@magic-ext/oauth';
+import Web3 from 'web3';
 
 import {BlockchainNetwork, NetworkConfig} from 'services/config';
 

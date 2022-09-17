@@ -37,8 +37,9 @@
           <action android:name="android.intent.action.VIEW"/>
           <category android:name="android.intent.category.DEFAULT"/>
           <category android:name="android.intent.category.BROWSABLE"/>
-          <data android:scheme="https" android:host="ranger.treejer.com" android:pathPrefix="/referrer/" />
-          <data android:scheme="https" android:host="ranger.treejer.com" android:pathPrefix="/organization/" />
+            <data android:scheme="https" android:host="ranger.treejer.com" android:pathPrefix="/referrer/" />
+            <data android:scheme="https" android:host="ranger.treejer.com" android:pathPrefix="/organization/" />
+            <data android:scheme="rangerTreejer" android:host="ranger.treejer.com" android:pathPrefix="/login/" />
         </intent-filter>
       </activity>
     </application>

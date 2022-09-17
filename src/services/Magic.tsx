@@ -1,6 +1,5 @@
-import Web3 from 'web3';
 import {Magic} from '@magic-sdk/react-native';
-import {OAuthExtension} from '@magic-ext/react-native-oauth';
+import Web3 from 'web3';
 
 import {BlockchainNetwork, NetworkConfig} from 'services/config';
 
@@ -10,7 +9,6 @@ export function isMatic(config: NetworkConfig) {
 
 export function magicGenerator(config: NetworkConfig) {
   return new Magic(config.magicApiKey, {
-    extensions: [new OAuthExtension()],
     network: isMatic(config)
       ? {
           rpcUrl: config.web3Url,

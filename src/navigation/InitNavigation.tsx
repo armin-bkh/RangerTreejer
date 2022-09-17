@@ -1,23 +1,24 @@
 import React, {useEffect} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {AppLoading} from 'components/AppLoading/AppLoading';
+import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
+import Toast from 'react-native-toast-notifications';
+
+import {RootNavigation, Routes} from 'navigation/navigation';
 import ApolloProvider from 'services/apollo';
-import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';
+import Web3Provider from 'services/web3';
+import {useAppInitialValue} from 'services/settings';
+import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
+import CurrentJourneyProvider from 'services/currentJourney';
+import {AppLoading} from 'components/AppLoading/AppLoading';
 import NetInfo from 'components/NetInfo';
 import {SwitchNetwork} from 'components/SwitchNetwork/SwitchNetwork';
 import PreLoadImage from 'components/PreloadImage/PreLoadImage';
-import {isWeb} from 'utilities/helpers/web';
 import {ToastContainer, toastProviderProps} from 'components/Toast/ToastContainer';
 import LandScapeModal from 'components/LandScapeModal/LandScapeModal';
 import UpdateModal from 'components/UpdateModal/UpdateModal';
-import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
-import {isProd, rangerDevUrl, rangerUrl} from 'services/config';
-import {RootNavigation, Routes} from 'navigation/navigation';
+import {isWeb} from 'utilities/helpers/web';
+import {OfflineTreeProvider} from 'utilities/hooks/useOfflineTrees';
 import {useInit} from '../redux/modules/init/init';
-import CurrentJourneyProvider from 'services/currentJourney';
-import Web3Provider from 'services/web3';
-import {useAppInitialValue} from 'services/settings';
-import Toast from 'react-native-toast-notifications';
 
 const config = {
   screens: {

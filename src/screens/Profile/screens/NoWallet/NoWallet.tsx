@@ -5,10 +5,9 @@ import {useTranslation} from 'react-i18next';
 import {useForm} from 'react-hook-form';
 import PhoneInput from 'react-native-phone-number-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {OAuthProvider} from '@magic-ext/react-native-oauth';
+import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 
 import {RootNavigationProp, Routes} from 'navigation';
-import {redirectRangerUrl} from 'services/config';
 import globalStyles from 'constants/styles';
 import {colors} from 'constants/values';
 import Button from 'components/Button';
@@ -23,19 +22,27 @@ import {useAnalytics} from 'utilities/hooks/useAnalytics';
 import {isWeb} from 'utilities/helpers/web';
 import {validateEmail} from 'utilities/helpers/validators';
 import {AlertMode, showAlert} from 'utilities/helpers/alert';
-import {SocialLoginButton} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
+import {SocialLoginButton, SocialLoginButtonProps} from 'screens/Profile/screens/NoWallet/SocialLoginButton';
 import {NoWalletImage} from '../../../../../assets/images';
 import {useProfile} from '../../../../redux/modules/profile/profile';
+import {OAuthWebView} from 'components/OAuthWebView/OAuthWebView';
+import {createCryptoChallenge} from '../../../../@magic-ext/react-native-oauth/crypto';
+import {getDeepLink} from 'utilities/helpers/getDeepLinking';
 
 export type NoWalletProps = RootNavigationProp<Routes.Login>;
-
+export type TOAuthConfig = {
+  provider: SocialLoginButtonProps['name'];
+  state: string;
+  challenge: string;
+};
 function NoWallet(props: NoWalletProps) {
   const {navigation} = props;
 
   const {storeMagicToken, loading: web3Loading} = useUserWeb3();
   const {loading: profileLoading} = useProfile();
   const [isEmail, setIsEmail] = useState<boolean>(true);
-  const [loginPressed, setLoginPressed] = useState(false);
+  const [loginPressed, setLoginPressed] = useState<boolean>(false);
+  const [oAuthConfig, setOAuthConfig] = useState<TOAuthConfig | null>(null);
 
   const config = useConfig();
   const magic = useMagic();
@@ -159,24 +166,56 @@ function NoWallet(props: NoWalletProps) {
     }
   });
 
-  const handleSocialLogin = useCallback(async (provider: OAuthProvider) => {
+  const handleSocialLogin = useCallback(async (provider: SocialLoginButtonProps['name']) => {
+    const deepLink = getDeepLink('login/');
+    console.log(deepLink, 'deeplink is hereee');
     try {
-      console.log('mamad');
-      const result = await magic.oauth.loginWithPopup({
+      const {challenge, state} = await createCryptoChallenge();
+      setOAuthConfig({
         provider,
-        redirectURI: redirectRangerUrl,
+        state,
+        challenge,
       });
-      const initialUrl = await Linking.getInitialURL();
-      console.log(initialUrl);
-      console.log(result, 'result is here');
-    } catch (e: any) {
-      console.log(e, 'error ish er');
+      const query = () =>
+        [
+          `magic_api_key=${encodeURIComponent(config.magicApiKey)}`,
+          `magic_challenge=${encodeURIComponent(challenge)}`,
+          `state=${encodeURIComponent(state)}`,
+          `platform=${encodeURIComponent('rn')}`,
+          `redirect_uri=${encodeURIComponent('')}`,
+        ].reduce((prev, next) => (next ? `${prev}&${next}` : prev));
+
+      const url = `https://auth.magic.link/v1/oauth2/${provider.toLowerCase()}/start?${query()}`;
+      if (await InAppBrowser.isAvailable()) {
+        InAppBrowser.openAuth(url, deepLink, {
+          // iOS Properties
+          ephemeralWebSession: false,
+          // Android Properties
+          showTitle: false,
+          enableUrlBarHiding: true,
+          enableDefaultShare: false,
+        }).then(response => {
+          if (response.type === 'success' && response.url) {
+            console.log(response, 'res is here');
+            // Linking.openURL(response.url);
+          }
+        });
+      } else {
+        // Linking.openURL(url);
+        console.log('else is here');
+      }
+    } catch (error: any) {
+      console.log(error, 'error is here');
     }
   }, []);
 
   const handleToggleAuthMethod = () => {
     setIsEmail(!isEmail);
   };
+
+  const handleCloseOAuthModal = useCallback(() => {
+    setOAuthConfig(null);
+  }, []);
 
   // useEffect(() => {
   //   if (unlocked) {
@@ -186,6 +225,17 @@ function NoWallet(props: NoWalletProps) {
   //     });
   //   }
   // }, [unlocked, navigation]);
+
+  // if (oAuthConfig) {
+  //   return (
+  //     <OAuthWebView
+  //       provider={oAuthConfig.provider}
+  //       state={oAuthConfig.state}
+  //       challenge={oAuthConfig.challenge}
+  //       onClose={handleCloseOAuthModal}
+  //     />
+  //   );
+  // }
 
   return (
     <SafeAreaView style={[globalStyles.screenView, {flex: 1}]}>

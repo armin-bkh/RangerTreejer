@@ -12,8 +12,6 @@ import {getBalance, resetBalance} from '../contracts/contracts';
 import {selectNetInfo} from '../netInfo/netInfo';
 import {profileActions, selectProfile} from '../profile/profile';
 import {TReduxState, TStoreRedux} from '../../store';
-import {SDKBaseReactNative} from '@magic-sdk/react-native/dist/types/react-native-sdk-base';
-import {OAuthExtension} from '@magic-ext/react-native-oauth';
 
 export type TWeb3 = {
   network: BlockchainNetwork;
@@ -55,7 +53,7 @@ export type TWeb3Action = {
   type: string;
   updateWeb3: {
     config: NetworkConfig;
-    magic: typeof defaultMagic;
+    magic: Magic;
     web3: Web3;
     treeFactory: Contract;
     planter: Contract;
